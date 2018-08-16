@@ -6,24 +6,22 @@ import (
 	"strconv"
 	"time"
 
+	// We can do this natively just as easy, but this framework makes
+	// the examples a bit more clear.
 	"github.com/gin-gonic/gin"
 )
 
 var (
-	port      int
-	heartbeat *time.Ticker
-	router    *gin.Engine
+	beats, port int
+	heartbeat   *time.Ticker
+	router      *gin.Engine
 )
 
-// PingTheAPI ...
-func PingTheAPI(c *gin.Context) {
-	content := gin.H{"payload": "PONG"}
-	c.JSON(http.StatusOK, content)
-}
-
+// Do all of this stuff first.
 func init() {
+	// In this example, we will hard code the port.  Later the environment
+	// will dictate.
 	port = 7718
-
 	// Set up the heartbeat ticker.
 	heartbeat = time.NewTicker(60 * time.Second)
 
@@ -31,21 +29,44 @@ func init() {
 	gin.SetMode(gin.ReleaseMode)
 	router = gin.New()
 
-	router.GET("/system/ping", PingTheAPI)
+	// These are the services we will be listening for.
+	router.GET("/beats", GetHeartbeatCount)
+	router.GET("/ping", PingTheAPI)
+
 } // func
+
+// GetHeartbeatCount sends the number of times the heartbeat ticker has
+// fired since the program started.
+func GetHeartbeatCount(c *gin.Context) {
+	content := gin.H{"payload": beats}
+	c.JSON(http.StatusOK, content)
+}
+
+// PingTheAPI lets the caller know we are alive.
+func PingTheAPI(c *gin.Context) {
+	content := gin.H{"payload": "PONG"}
+	c.JSON(http.StatusOK, content)
+}
 
 // main ...
 func main() {
 
+	// Dispatch a process into the background.
 	go func() {
+		// Now run it forever.
 		for {
+			// Watch for stuff to happen.
 			select {
+			// When the Heartbeat ticker is fired, execute this.
 			case <-heartbeat.C:
+				beats++
 				fmt.Printf("bump,Bump...\n")
 			} // select
 		} // for
 	}() // go func
 
+	// After the 'go func' is dispatched, start the server and listen on the
+	// specified port.
 	fmt.Printf("ready on port %d\n", port)
 	router.Run(":" + strconv.Itoa(port))
 
