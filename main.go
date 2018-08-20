@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	// We can do this natively just as easy, but this framework makes
+	// We can do this natively just as easily, but this framework makes
 	// the examples a bit more clear.
 	"github.com/gin-gonic/gin"
 )
@@ -48,9 +48,8 @@ func PingTheAPI(c *gin.Context) {
 	c.JSON(http.StatusOK, content)
 }
 
-// main ...
+// Manage the processes.
 func main() {
-
 	// Dispatch a process into the background.
 	go func() {
 		// Now run it forever.
@@ -60,7 +59,7 @@ func main() {
 			// When the Heartbeat ticker is fired, execute this.
 			case <-heartbeat.C:
 				beats++
-				fmt.Printf("bump,Bump...\n")
+				fmt.Printf("bump,Bump... @ %s\n", time.Now().UTC())
 			} // select
 		} // for
 	}() // go func
