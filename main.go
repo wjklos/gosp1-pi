@@ -66,6 +66,6 @@ func main() {
 
 	// After the 'go func' is dispatched, start the server and listen on the
 	// specified port.
-	fmt.Printf("ready on port %d\n", port)
+	fmt.Printf("ready on raspberry port %d\n", port)
 	router.Run(":" + strconv.Itoa(port))
 } // func
