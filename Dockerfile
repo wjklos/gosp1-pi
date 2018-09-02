@@ -1,4 +1,4 @@
-FROM arm32v7/golang:latest 
+FROM arm32v6/golang:latest 
 RUN go get -v github.com/gin-gonic/gin
 RUN mkdir /app 
 ADD . /app/ 
