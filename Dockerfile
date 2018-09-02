@@ -5,4 +5,5 @@ ADD . /app/
 WORKDIR /app 
 EXPOSE 7718 
 RUN go build -o main . 
+
 CMD ["/app/main"]
