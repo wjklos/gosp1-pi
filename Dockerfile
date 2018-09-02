@@ -1,11 +1,15 @@
-FROM arm32v7/golang:1.11
+FROM arm32v7/golang:latest 
+RUN go get -v github.com/gin-gonic/gin
+RUN mkdir /app 
+ADD . /app/ 
+WORKDIR /app 
+EXPOSE 7718 
 
-WORKDIR /go/src/app
-COPY . .
+ENV GOOS=linux
+ENV GOARCH=arm
+ENV GOARM=7
 
-RUN go get -d -v ./...
-RUN go install -v ./...
-EXPOSE 7718
-CMD ["app"]
+RUN go build -o main . 
 
+CMD ["/app/main"]
 
